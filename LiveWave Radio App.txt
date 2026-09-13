@@ -1,0 +1,110 @@
+// ... existing code ...
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Home, Search as SearchIcon, Heart, Settings, 
+  Play, Pause, ChevronDown, Radio, Volume2, 
+  MoreVertical, Share2, Activity, Shield, 
+  Smartphone, Bell, Zap, Mic, MapPin
+} from 'lucide-react';
+
+// --- API Utility ---
+// Using Radio Browser API (Free, Community Driven)
+const API_BASE = 'https://de1.api.radio-browser.info/json/stations';
+
+export default function App() {
+  // App State
+  const [activeTab, setActiveTab] = useState('home');
+  const [stations, setStations] = useState([]);
+  const [indianStations, setIndianStations] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Player State
+// ... existing code ...
+  // --- Initialization & API Calls ---
+  useEffect(() => {
+    fetchTopStations();
+    fetchIndianStations();
+  }, []);
+
+  useEffect(() => {
+    // Setup Audio Element
+// ... existing code ...
+      setStations(validStations);
+    } catch (error) {
+      console.error("Failed to fetch stations", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchIndianStations = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/search?countrycode=IN&limit=200&order=clickcount&reverse=true`);
+      const data = await response.json();
+      const validStations = data.filter(s => 
+        s.url_resolved && 
+        s.url_resolved.startsWith('https://') &&
+        s.codec !== 'UNKNOWN'
+      ).slice(0, 50); // Loads top 50 Indian stations
+      
+      setIndianStations(validStations);
+    } catch (error) {
+      console.error("Failed to fetch Indian stations", error);
+    }
+  };
+
+  const searchStations = async (e) => {
+    if (e) e.preventDefault();
+// ... existing code ...
+              <span className="bg-fuchsia-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-[0_0_10px_rgba(217,70,239,0.5)]">
+                Live Now
+              </span>
+              <h2 className="text-2xl font-bold mt-4 text-white">Discover Global<br/>Soundscapes</h2>
+              <p className="text-slate-300 text-sm mt-2 max-w-[80%]">Tuning into the world's most popular frequencies.</p>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold mb-4 flex items-center">
+                <MapPin className="mr-2 text-orange-400" size={20} />
+                Top Indian Stations 🇮🇳
+              </h3>
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1,2,3,4].map(n => (
+                    <div key={n} className="h-24 bg-slate-800/50 rounded-2xl animate-pulse"></div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {indianStations.map(station => (
+                    <StationCard key={station.stationuuid} station={station} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4 flex items-center">
+                <Zap className="mr-2 text-cyan-400" size={20} />
+                Trending Global
+              </h3>
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1,2,3,4].map(n => (
+                    <div key={n} className="h-24 bg-slate-800/50 rounded-2xl animate-pulse"></div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {stations.map(station => (
+                    <StationCard key={station.stationuuid} station={station} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'search' && (
+// ... existing code ...
